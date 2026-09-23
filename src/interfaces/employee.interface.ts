@@ -7,7 +7,7 @@ export interface IEmployee {
    yearsOfService: number;
    finalSalary: number;
 }
-export type IEmployeeCreate = Omit<IEmployee, 'finalSalary'> //DTO para creacion de un empleado
+export type IEmployeeCreate = Omit<IEmployee, 'finalSalary'> //DTO (Data transfer object) para creacion de un empleado
 
 //Interfaz para ser utilizada en clase de servicio
 export interface IEmployeeRepository {

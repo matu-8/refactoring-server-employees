@@ -1,39 +1,38 @@
 // controladores de empleado -  capa de presentacion
-import EmployeeModel from "../models/employee.model";
+import { NotFoundError } from "../errorHandler/error.handler";
 import { IEmployeeService } from "../interfaces/employee.interface";
-import { Request, Response} from 'express'
+import { NextFunction, Request, Response} from 'express'
 
 export class EmployeeController {
   constructor(private readonly employeeService: IEmployeeService){} //Inyeccion de dependencia
-  createEmployee = async (req: Request, res: Response) => {
+  createEmployee = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const employee = await this.employeeService.create(req.body)
       res.status(200).json({msg:'Empleado ha sido creado', data: employee})
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      next(error)
     }
   }
-  getEmployees = async (_req: Request, res: Response) => {
+  getEmployees = async (_req: Request, res: Response, next: NextFunction) => {
     try {
-      const employees = await EmployeeModel.find().sort({ createdAt: -1 });
+      const employees = await this.employeeService.findAll();
+      if(!employees.length) throw new NotFoundError("No hay empleados")
       return res.json(employees);
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error interno del servidor' });
+      next(error)
     }
   }
-  getEmployee = async (req: Request, res: Response) => {
+  getEmployee = async (req: Request, res: Response, next: NextFunction) => {
     try {
-       const employee = await EmployeeModel.findById(req.params.id);
+       const {id} = req.params
+       const employee = await this.employeeService.findById(id.toString()) //al cambiar el tipo del que sera id en la interfaz, se corrige el error
 
        if (!employee) {
-         return res.status(404).json({ message: 'Empleado no encontrado' });
+        throw new NotFoundError(`No se encuentra el empleado con el id ${id}`)
        }
        return res.json(employee);
      } catch (error) {
-       console.error(error);
-       return res.status(500).json({ message: 'Error interno del servidor' });
+       next(error)
      }
   }
 }

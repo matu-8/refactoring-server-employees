@@ -10,5 +10,7 @@ const employeeService = new EmployeeService(employeeRepository)
 const employeeController = new EmployeeController(employeeService)
 
 router.get('/employees', employeeController.getEmployees)
-router.get('/employee/:id', employeeController.getEmployee)
+router.get('/employees/:id', employeeController.getEmployee)
 router.post('/employees', employeeController.createEmployee)
+
+export default router;

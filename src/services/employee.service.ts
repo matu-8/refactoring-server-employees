@@ -1,5 +1,5 @@
 import { IEmployeeRepository, IEmployee,IEmployeeService, IEmployeeCreate } from "../interfaces/employee.interface";
-
+import {BadRequestError,NotFoundError } from "../errorHandler/error.handler"
 export class EmployeeService implements IEmployeeService {
   constructor(private readonly employeeRepository: IEmployeeRepository) { }
 
@@ -7,7 +7,7 @@ export class EmployeeService implements IEmployeeService {
     const { name, position, baseSalary, yearsOfService } = data;
 
     if (!name || !position) {
-      throw new Error('Nombre y puesto son obligatorios')
+      throw new BadRequestError('Nombre y puesto son obligatorios')
     }
 
     if (typeof baseSalary !== 'number' || baseSalary <= 0) {
